@@ -3,7 +3,10 @@ from __future__ import unicode_literals
 from __future__ import print_function
 """Главный модуль программы"""
 
+import os
+import sys
 import calc
+
 
 names = (("Феху", "Уруз", "Турисаз", "Ансуз", "Райдо", "Кеназ", "Гебо", "Вуньо", "Вирд"),
          ("Хагалаз", "Наутиз", "Иса", "Йера", "Эйваз", "Перт", "Альгиз", "Совило", "Вирд"),
@@ -132,14 +135,27 @@ def runes(date, name):
             names[rune2.att - 1][rune2.group - 1],
             names[rune3.att - 1][rune3.group - 1])
 
+def usage():
+    filename = __file__.split(os.sep)[-1]
+    print("Неправильно заданы аргументы командной строки.\n" +
+          "Использование: {0} <фамилия> <имя> <отчество> <дата рождения> в виде 'день.месяц.год'.\n".format(filename))
+
 def main():
     """Главная функция программы"""
     # Сканируем ФИО и дату рождения (и разбиваем)
-    name = raw_input("Введите ФИО:\n> ").decode('utf-8').split()
-    date = raw_input("Введите дату рождения:\n> ").decode('utf-8').split('.')
-
-    # Переводим дату рождения из строк в числа
-    date = tuple([int(i) for i in date])
+    if len(sys.argv) == 1:
+        name = raw_input("Введите ФИО:\n> ").decode('utf-8').split()
+        date = raw_input("Введите дату рождения:\n> ").decode('utf-8').split('.')
+        date = tuple([int(i) for i in date])
+    elif len(sys.argv) == 5:
+        name = sys.argv[1:4]
+        date = sys.argv[4].split('.')
+        try:
+            date = tuple([int(i) for i in date])
+        except ValueError:
+            usage()
+    else:
+        usage()
 
     # Вывод результатов
     print(*runes(date, name))
